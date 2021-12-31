@@ -9,5 +9,5 @@ Development templates used for simplifying dev workflows.
 ### Installation
 Ensure you are in your repo's base dir.
 ```
-curl -s https://raw.githubusercontent.com/accuknox/knoxTemplates/master/install.sh | bash -s
+curl -s https://raw.githubusercontent.com/nyrahul/dev-templates/main/install.sh | bash -s
 ```
