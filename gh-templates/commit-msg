@@ -1,0 +1,65 @@
+#!/bin/bash
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "commit-msg".
+
+# Uncomment the below to add a Signed-off-by line to the message.
+# Doing this in a hook is a bad idea in general, but the prepare-commit-msg
+# hook is more suited to it.
+#
+# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# grep -qs "^$SOB" "$1" || echo "$SOB" >> "$1"
+
+# This example catches duplicate Signed-off-by lines.
+
+DIR=`dirname "$0"`
+. $DIR/git-base.sh
+
+grep '^Fixes: ' "$1" > /dev/null
+if [ $? -ne 0 ]; then
+	printf "${RED}No \"Fixes: #ISSUE-NUM\" found in the commit msg. It is mandatory to reference the issue against which the commit is done.${NC}\n"
+	exit 1
+fi
+
+chk_remote()
+{
+	TMP=/tmp/gh-template-$$
+
+	GH_REPO=$url gh issue view $1 2>/dev/null > $TMP
+	[[ $? -ne 0 ]] && return 1
+
+	grep "^state:.*OPEN" $TMP > /dev/null
+	[[ $? -ne 0 ]] && return 1
+
+	title=`grep "^title:" $TMP | cut -f 2`
+	printf "Found ${GREEN}#$1: $title${NC}\n"
+}
+
+chk_if_issue_present()
+{
+	chk_remote $1 upstream
+	[[ $? -eq 0 ]] && return 0
+
+	for remote in `git remote -v  | awk '{ print $1 }' | sort | uniq`; do
+		[[ "$remote" == "upstream" ]] && continue
+		chk_remote $1 $remote
+		[[ $? -eq 0 ]] && return 0
+	done
+	return 1
+}
+
+issuenum=`sed -n 's/^Fixes: *#\([0-9]*\)/\1/p' "$1"`
+if [ -n "$issuenum" ] && [ "$issuenum" -eq "$issuenum" ] 2>/dev/null; then
+	# gh is installed as part of knoxTemplates->install.sh repo
+	chk_if_issue_present $issuenum
+	[[ $? -ne 0 ]] && printf "${RED}Could not find an OPEN issue #$issuenum.${NC}\n" && exit 1
+else
+	printf "${RED}Issue number format [$issuenum] is incorrect.${NC}\n"
+	exit 1
+fi
+exit 0
