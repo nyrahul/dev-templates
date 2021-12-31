@@ -37,7 +37,7 @@ chk_remote()
 	[[ $? -ne 0 ]] && return 1
 
 	title=`grep "^title:" $TMP | cut -f 2`
-	printf "Found ${GREEN}#$1: $title${NC}\n"
+	printf "Found ${GREEN}Issue #$1: $title${NC}\n"
 }
 
 chk_if_issue_present()
