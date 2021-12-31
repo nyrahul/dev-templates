@@ -19,6 +19,7 @@ install_latest_templates()
 
 chkbasic()
 {
+	[[ "$(which gh)" == "" ]] && echo "Download latest gh-cli tool from https://github.com/cli/cli/releases and save it in any PATH folders." && exit 1
 	[[ ! -d ".git" ]] && echo "You need to execute this from the base dir of your repo." && exit 1
 	git remote -v 2>&1 >/dev/null
 	[[ $? -ne 0 ]] && echo "Execute this script from the base dir of your repo." && exit 1
