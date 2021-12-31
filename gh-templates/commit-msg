@@ -55,7 +55,7 @@ chk_if_issue_present()
 
 issuenum=`sed -n 's/^Fixes: *#\([0-9]*\)/\1/p' "$1"`
 if [ -n "$issuenum" ] && [ "$issuenum" -eq "$issuenum" ] 2>/dev/null; then
-	# gh is installed as part of knoxTemplates->install.sh repo
+	# gh is installed as part of dev-templates repo
 	chk_if_issue_present $issuenum
 	[[ $? -ne 0 ]] && printf "${RED}Could not find an OPEN issue #$issuenum.${NC}\n" && exit 1
 else

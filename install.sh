@@ -4,12 +4,12 @@ LOCALBIN=$HOME/.local/bin
 
 install_latest_templates()
 {
-	TMP=/tmp/knoxTemplates_$$
+	TMP=/tmp/dev-templates_$$
 	export GIT_TEMPLATE_DIR=$HOME/.git/templates/hooks
 	mkdir -p $GIT_TEMPLATE_DIR 2>/dev/null
 
-	echo -en "Installing knoxTemplates..."
-	[[ ! -d $TMP ]] && git clone --quiet --depth 1 https://github.com/accuknox/knoxTemplates.git $TMP
+	echo -en "Installing Templates..."
+	[[ ! -d $TMP ]] && git clone --quiet --depth 1 https://github.com/nyrahul/dev-templates.git $TMP
 	cd $TMP
 	cp gh-templates/* $GIT_TEMPLATE_DIR
 	cd - >/dev/null
