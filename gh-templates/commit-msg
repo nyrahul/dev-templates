@@ -62,4 +62,8 @@ else
 	printf "${RED}Issue number format [$issuenum] is incorrect.${NC}\n"
 	exit 1
 fi
+
+signoff=`sed -n 's/^Signed-off-by: *.*<\(.*\)>/\1/p' "$1"`
+[[ $signoff != *@*.[a-z]* ]] && printf "${RED}Invalid email ID [$signoff] in Signed-off-by${NC}\n"
+
 exit 0
